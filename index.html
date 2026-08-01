@@ -267,11 +267,34 @@
 </div>
 
 <script>
-  document.getElementById('notify').addEventListener('submit', function(e){
+  const SUPABASE_URL = "https://ausppeltwrkvkjzrbtsa.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF1c3BwZWx0d3JrdmtqenJidHNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2Nzc5NjgsImV4cCI6MjEwMDI1Mzk2OH0.HNbREcYOq8qccORNs3ZghKGCbDHJDzyz7tN6S1Q8vEY";
+
+  document.getElementById('notify').addEventListener('submit', async function(e){
     e.preventDefault();
     const btn = this.querySelector('button');
+    const input = this.querySelector('input');
+    const email = input.value;
+
+    btn.textContent = "Saving...";
+    input.disabled = true;
+
+    try {
+      await fetch(SUPABASE_URL + "/rest/v1/waitlist", {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({ email: email })
+      });
+    } catch (err) {
+      console.error("Waitlist save failed:", err);
+    }
+
     btn.textContent = "Taking you there...";
-    this.querySelector('input').disabled = true;
     setTimeout(function(){
       window.location.href = "https://blueprint-profit-maxxing-os.vercel.app/";
     }, 600);
